@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chung Kết: Tây Ban Nha vs Argentina — Sổ Cược Bạn Bè</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#0a0f1e;
+    --night2:#0f1730;
+    --line:rgba(255,255,255,0.08);
+    --esp-red:#c8102e;
+    --esp-gold:#f1bf00;
+    --arg-blue:#75aadb;
+    --arg-white:#f5f5f0;
+    --floodlight:#eaf4ff;
+    --text-dim:#9aa4c0;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse 120% 60% at 50% -10%, rgba(234,244,255,0.10), transparent 60%),
+      radial-gradient(ellipse 80% 50% at 15% 100%, rgba(200,16,46,0.12), transparent 60%),
+      radial-gradient(ellipse 80% 50% at 85% 100%, rgba(117,170,219,0.12), transparent 60%),
+      var(--night);
+    font-family:'Oswald',sans-serif;
+    color:var(--arg-white);
+    padding:28px 16px 60px;
+  }
+  .wrap{max-width:640px;margin:0 auto;}
+
+  /* Scoreboard header */
+  .board{
+    text-align:center;
+    padding:18px 10px 22px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:26px;
+  }
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:.35em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    margin-bottom:10px;
+  }
+  .matchup{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(30px,8vw,52px);
+    letter-spacing:.04em;
+    line-height:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .matchup .esp{color:var(--esp-gold);}
+  .matchup .arg{color:var(--arg-blue);}
+  .matchup .vs{
+    font-size:16px;
+    color:var(--night);
+    background:var(--floodlight);
+    padding:3px 10px;
+    border-radius:3px;
+    letter-spacing:.1em;
+    animation:flicker 3.2s infinite;
+  }
+  @keyframes flicker{
+    0%,92%,100%{opacity:1;}
+    94%{opacity:.4;}
+    96%{opacity:1;}
+    98%{opacity:.5;}
+  }
+  .subline{color:var(--text-dim);font-size:13px;margin-top:8px;}
+
+  /* Team cards */
+  .teams{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px;}
+  .team{
+    position:relative;
+    border-radius:10px;
+    padding:22px 14px 18px;
+    text-align:center;
+    cursor:pointer;
+    border:1px solid var(--line);
+    background:var(--night2);
+    transition:transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+    overflow:hidden;
+  }
+  .team:hover{transform:translateY(-2px);}
+  .team .flag{
+    width:64px;height:44px;
+    margin:0 auto 12px;
+    border-radius:3px;
+    box-shadow:0 2px 10px rgba(0,0,0,.4);
+    overflow:hidden;
+  }
+  .flag-esp{background:linear-gradient(var(--esp-red) 25%, var(--esp-gold) 25%, var(--esp-gold) 75%, var(--esp-red) 75%);}
+  .flag-arg{
+    background:linear-gradient(var(--arg-blue) 33%, var(--arg-white) 33%, var(--arg-white) 66%, var(--arg-blue) 66%);
+    position:relative;
+  }
+  .flag-arg::after{
+    content:"";
+    position:absolute;top:50%;left:50%;
+    width:14px;height:14px;
+    background:radial-gradient(circle, #f6c545 0 40%, transparent 41%),
+      repeating-conic-gradient(#f6c545 0deg 15deg, transparent 15deg 30deg);
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+  }
+  .team .name{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:24px;
+    letter-spacing:.05em;
+  }
+  .team .tally{
+    margin-top:10px;
+    font-size:12px;
+    color:var(--text-dim);
+  }
+  .team .tally b{color:var(--floodlight);}
+  .team.selected{
+    border-color:var(--floodlight);
+    box-shadow:0 0 0 1px var(--floodlight), 0 8px 24px rgba(234,244,255,.12);
+  }
+  .team.selected.esp{border-color:var(--esp-gold);box-shadow:0 0 0 1px var(--esp-gold), 0 8px 24px rgba(241,191,0,.15);}
+  .team.selected.arg{border-color:var(--arg-blue);box-shadow:0 0 0 1px var(--arg-blue), 0 8px 24px rgba(117,170,219,.15);}
+
+  /* Tug of war bar */
+  .tug{
+    height:10px;
+    border-radius:6px;
+    overflow:hidden;
+    display:flex;
+    margin-bottom:26px;
+    background:var(--night2);
+    border:1px solid var(--line);
+  }
+  .tug .esp-fill{background:linear-gradient(90deg,var(--esp-red),var(--esp-gold));transition:width .4s ease;}
+  .tug .arg-fill{background:linear-gradient(90deg,var(--arg-blue),#3f6f9c);transition:width .4s ease;}
+
+  /* Amount picker */
+  .section-label{
+    font-size:12px;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+    margin:0 0 10px;
+  }
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+  .chip{
+    padding:9px 16px;
+    border-radius:20px;
+    border:1px solid var(--line);
+    background:var(--night2);
+    color:var(--arg-white);
+    font-family:'Oswald',sans-serif;
+    font-size:14px;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+  .chip:hover{border-color:var(--floodlight);}
+  .chip.active{background:var(--floodlight);color:var(--night);border-color:var(--floodlight);font-weight:600;}
+
+  .row{display:flex;gap:10px;margin-bottom:14px;}
+  input[type=text],input[type=number]{
+    flex:1;
+    padding:12px 14px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--night2);
+    color:var(--arg-white);
+    font-family:'Oswald',sans-serif;
+    font-size:14px;
+  }
+  input::placeholder{color:var(--text-dim);}
+  input:focus, .chip:focus, .team:focus{outline:2px solid var(--floodlight);outline-offset:2px;}
+
+  .submit{
+    width:100%;
+    padding:14px;
+    border-radius:8px;
+    border:none;
+    background:var(--floodlight);
+    color:var(--night);
+    font-family:'Bebas Neue',sans-serif;
+    font-size:18px;
+    letter-spacing:.08em;
+    cursor:pointer;
+    transition:transform .1s ease;
+  }
+  .submit:hover{transform:translateY(-1px);}
+  .submit:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+  .status{font-size:12px;color:var(--text-dim);text-align:center;margin-top:8px;min-height:16px;}
+
+  /* Bet list */
+  .ledger{margin-top:34px;}
+  .ledger-title{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:20px;
+    letter-spacing:.05em;
+    border-bottom:1px solid var(--line);
+    padding-bottom:8px;
+    margin-bottom:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+  .ledger-title span{font-family:'Oswald',sans-serif;font-size:12px;color:var(--text-dim);}
+  .bet-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 4px;
+    border-bottom:1px solid var(--line);
+    font-size:14px;
+  }
+  .bet-item .who{display:flex;align-items:center;gap:8px;}
+  .dot{width:9px;height:9px;border-radius:50%;}
+  .dot.esp{background:linear-gradient(var(--esp-red),var(--esp-gold));}
+  .dot.arg{background:linear-gradient(var(--arg-blue),var(--arg-white));}
+  .bet-item .amt{color:var(--floodlight);font-weight:600;}
+  .empty{color:var(--text-dim);font-size:13px;text-align:center;padding:20px 0;}
+
+  .disclaimer{
+    margin-top:30px;
+    font-size:11px;
+    color:var(--text-dim);
+    text-align:center;
+    line-height:1.6;
+    border-top:1px solid var(--line);
+    padding-top:16px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="board">
+    <div class="eyebrow">Sổ cược bạn bè · Trận chung kết</div>
+    <div class="matchup">
+      <span class="esp">TÂY BAN NHA</span>
+      <span class="vs">VS</span>
+      <span class="arg">ARGENTINA</span>
+    </div>
+    <div class="subline">Chọn đội bạn tin sẽ vô địch và mức cược muốn góp vào bàn</div>
+  </div>
+
+  <div class="teams">
+    <div class="team esp" id="team-esp" tabindex="0" role="button" aria-pressed="false">
+      <div class="flag flag-esp"></div>
+      <div class="name">Tây Ban Nha</div>
+      <div class="tally" id="tally-esp">Chưa có cược</div>
+    </div>
+    <div class="team arg" id="team-arg" tabindex="0" role="button" aria-pressed="false">
+      <div class="flag flag-arg"></div>
+      <div class="name">Argentina</div>
+      <div class="tally" id="tally-arg">Chưa có cược</div>
+    </div>
+  </div>
+
+  <div class="tug" aria-hidden="true">
+    <div class="esp-fill" id="fill-esp" style="width:50%"></div>
+    <div class="arg-fill" id="fill-arg" style="width:50%"></div>
+  </div>
+
+  <div class="section-label">Mức cược</div>
+  <div class="chips" id="chips">
+    <button class="chip" data-amt="20000">20k</button>
+    <button class="chip" data-amt="50000">50k</button>
+    <button class="chip" data-amt="100000">100k</button>
+    <button class="chip" data-amt="200000">200k</button>
+    <button class="chip" data-amt="500000">500k</button>
+  </div>
+
+  <div class="row">
+    <input type="text" id="name-input" placeholder="Tên của bạn">
+    <input type="number" id="custom-amt" placeholder="Số tiền khác (VNĐ)" min="0" step="1000">
+  </div>
+
+  <button class="submit" id="submit-btn" disabled>ĐẶT CƯỢC</button>
+  <div class="status" id="status"></div>
+
+  <div class="ledger">
+    <div class="ledger-title">Bảng cược <span id="ledger-count">0 lượt</span></div>
+    <div id="ledger-list"><div class="empty">Chưa có ai đặt cược. Là người đầu tiên!</div></div>
+  </div>
+
+  <div class="disclaimer">
+    Đây là công cụ ghi lại cược vui giữa bạn bè, không xử lý giao dịch tiền thật.<br>
+    Dữ liệu đặt cược được lưu chung và mọi người dùng trang này đều xem được.
+  </div>
+</div>
+
+<script>
+(function(){
+  const STORE_KEY = 'esp-arg-final-bets';
+  let selectedTeam = null;
+  let selectedAmount = null;
+  let bets = [];
+
+  const teamEsp = document.getElementById('team-esp');
+  const teamArg = document.getElementById('team-arg');
+  const chips = document.querySelectorAll('.chip');
+  const customAmt = document.getElementById('custom-amt');
+  const nameInput = document.getElementById('name-input');
+  const submitBtn = document.getElementById('submit-btn');
+  const statusEl = document.getElementById('status');
+
+  function fmt(n){
+    return new Intl.NumberFormat('vi-VN').format(n) + ' đ';
+  }
+
+  function selectTeam(team){
+    selectedTeam = team;
+    teamEsp.classList.toggle('selected', team === 'esp');
+    teamArg.classList.toggle('selected', team === 'arg');
+    teamEsp.setAttribute('aria-pressed', team === 'esp');
+    teamArg.setAttribute('aria-pressed', team === 'arg');
+    updateSubmitState();
+  }
+
+  teamEsp.addEventListener('click', () => selectTeam('esp'));
+  teamArg.addEventListener('click', () => selectTeam('arg'));
+  [teamEsp, teamArg].forEach(el => {
+    el.addEventListener('keydown', e => {
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); el.click(); }
+    });
+  });
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      selectedAmount = parseInt(chip.dataset.amt, 10);
+      customAmt.value = '';
+      updateSubmitState();
+    });
+  });
+
+  customAmt.addEventListener('input', () => {
+    if(customAmt.value){
+      chips.forEach(c => c.classList.remove('active'));
+      selectedAmount = parseInt(customAmt.value, 10);
+    } else {
+      selectedAmount = null;
+    }
+    updateSubmitState();
+  });
+
+  nameInput.addEventListener('input', updateSubmitState);
+
+  function updateSubmitState(){
+    const ok = selectedTeam && selectedAmount > 0 && nameInput.value.trim().length > 0;
+    submitBtn.disabled = !ok;
+  }
+
+  function renderTally(){
+    const espTotal = bets.filter(b => b.team === 'esp').reduce((s,b) => s + b.amount, 0);
+    const argTotal = bets.filter(b => b.team === 'arg').reduce((s,b) => s + b.amount, 0);
+    const espCount = bets.filter(b => b.team === 'esp').length;
+    const argCount = bets.filter(b => b.team === 'arg').length;
+
+    document.getElementById('tally-esp').innerHTML = espCount
+      ? `<b>${fmt(espTotal)}</b> · ${espCount} lượt` : 'Chưa có cược';
+    document.getElementById('tally-arg').innerHTML = argCount
+      ? `<b>${fmt(argTotal)}</b> · ${argCount} lượt` : 'Chưa có cược';
+
+    const total = espTotal + argTotal;
+    const espPct = total > 0 ? (espTotal/total*100) : 50;
+    const argPct = 100 - espPct;
+    document.getElementById('fill-esp').style.width = espPct + '%';
+    document.getElementById('fill-arg').style.width = argPct + '%';
+
+    document.getElementById('ledger-count').textContent = bets.length + ' lượt';
+    const list = document.getElementById('ledger-list');
+    if(bets.length === 0){
+      list.innerHTML = '<div class="empty">Chưa có ai đặt cược. Là người đầu tiên!</div>';
+      return;
+    }
+    const sorted = [...bets].sort((a,b) => b.ts - a.ts);
+    list.innerHTML = sorted.map(b => `
+      <div class="bet-item">
+        <div class="who"><span class="dot ${b.team}"></span>${escapeHtml(b.name)} · ${b.team === 'esp' ? 'Tây Ban Nha' : 'Argentina'}</div>
+        <div class="amt">${fmt(b.amount)}</div>
+      </div>
+    `).join('');
+  }
+
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  async function loadBets(){
+    try{
+      const result = await window.storage.get(STORE_KEY, true);
+      bets = result && result.value ? JSON.parse(result.value) : [];
+    }catch(e){
+      bets = [];
+    }
+    renderTally();
+  }
+
+  async function saveBets(){
+    try{
+      const result = await window.storage.set(STORE_KEY, JSON.stringify(bets), true);
+      return !!result;
+    }catch(e){
+      return false;
+    }
+  }
+
+  submitBtn.addEventListener('click', async () => {
+    if(submitBtn.disabled) return;
+    submitBtn.disabled = true;
+    statusEl.textContent = 'Đang lưu cược...';
+
+    const newBet = {
+      name: nameInput.value.trim(),
+      team: selectedTeam,
+      amount: selectedAmount,
+      ts: Date.now()
+    };
+    bets.push(newBet);
+    renderTally();
+
+    const ok = await saveBets();
+    if(ok){
+      statusEl.textContent = `Đã ghi cược của ${newBet.name}!`;
+      nameInput.value = '';
+      customAmt.value = '';
+      chips.forEach(c => c.classList.remove('active'));
+      selectedAmount = null;
+    } else {
+      statusEl.textContent = 'Lưu thất bại, thử lại nhé.';
+      bets.pop();
+      renderTally();
+    }
+    updateSubmitState();
+    setTimeout(() => { statusEl.textContent = ''; }, 3000);
+  });
+
+  loadBets();
+})();
+</script>
+</body>
+</html>
