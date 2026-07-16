@@ -264,6 +264,8 @@
     </div>
   </div>
 
+  <div id="pick-msg" style="text-align:center;font-size:14px;color:var(--floodlight);min-height:20px;margin-bottom:10px;"></div>
+
   <div class="tug" aria-hidden="true">
     <div class="esp-fill" id="fill-esp" style="width:50%"></div>
     <div class="arg-fill" id="fill-arg" style="width:50%"></div>
@@ -316,13 +318,14 @@
     return new Intl.NumberFormat('vi-VN').format(n) + ' đ';
   }
 
+  const pickMsg = document.getElementById('pick-msg');
   function selectTeam(team){
     if(team === 'arg'){
       const confirmed = window.confirm('Argentina sẽ thua chung kết đó, bạn chắc chắn chọn không?');
       if(!confirmed) return;
+      pickMsg.textContent = 'Bạn đã chọn Argentina. Chúc may mắn!';
     } else if(team === 'esp'){
-      statusEl.textContent = 'Lựa chọn của bạn rất đúng đắn! 10 điểm VIP VIP VIP 🏆';
-      setTimeout(() => { if(statusEl.textContent.includes('VIP')) statusEl.textContent = ''; }, 2500);
+      pickMsg.textContent = 'Lựa chọn của bạn rất đúng đắn! 10 điểm VIP VIP VIP 🏆';
     }
     selectedTeam = team;
     teamEsp.classList.toggle('selected', team === 'esp');
