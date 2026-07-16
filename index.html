@@ -299,7 +299,7 @@
 
 <script>
 (function(){
-  const STORE_KEY = 'esp-arg-final-bets';
+  const BLOB_URL = 'https://jsonblob.com/api/jsonBlob/019f6855-c7ed-71ae-8e5a-ae3c98d1414a';
   let selectedTeam = null;
   let selectedAmount = null;
   let bets = [];
@@ -400,18 +400,25 @@
 
   async function loadBets(){
     try{
-      const result = await window.storage.get(STORE_KEY, true);
-      bets = result && result.value ? JSON.parse(result.value) : [];
+      const res = await fetch(BLOB_URL, { headers: { 'Accept': 'application/json' } });
+      if(!res.ok) throw new Error('load failed');
+      const data = await res.json();
+      bets = Array.isArray(data.bets) ? data.bets : [];
     }catch(e){
       bets = [];
+      statusEl.textContent = 'Không tải được dữ liệu chung, thử tải lại trang.';
     }
     renderTally();
   }
 
   async function saveBets(){
     try{
-      const result = await window.storage.set(STORE_KEY, JSON.stringify(bets), true);
-      return !!result;
+      const res = await fetch(BLOB_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bets })
+      });
+      return res.ok;
     }catch(e){
       return false;
     }
@@ -428,6 +435,15 @@
       amount: selectedAmount,
       ts: Date.now()
     };
+
+    try{
+      const res = await fetch(BLOB_URL, { headers: { 'Accept': 'application/json' } });
+      if(res.ok){
+        const data = await res.json();
+        bets = Array.isArray(data.bets) ? data.bets : bets;
+      }
+    }catch(e){ /* dùng dữ liệu đang có nếu tải lại thất bại */ }
+
     bets.push(newBet);
     renderTally();
 
