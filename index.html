@@ -317,6 +317,13 @@
   }
 
   function selectTeam(team){
+    if(team === 'arg'){
+      const confirmed = window.confirm('Argentina sẽ thua chung kết đó, bạn chắc chắn chọn không?');
+      if(!confirmed) return;
+    } else if(team === 'esp'){
+      statusEl.textContent = 'Lựa chọn của bạn rất đúng đắn! 10 điểm VIP VIP VIP 🏆';
+      setTimeout(() => { if(statusEl.textContent.includes('VIP')) statusEl.textContent = ''; }, 2500);
+    }
     selectedTeam = team;
     teamEsp.classList.toggle('selected', team === 'esp');
     teamArg.classList.toggle('selected', team === 'arg');
